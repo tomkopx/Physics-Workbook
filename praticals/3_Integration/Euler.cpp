@@ -10,9 +10,9 @@ void UpdatePhysics_Euler(const double t, const double dt) {
   {
     // *********************************
     // Apply Accleration to Velocity
-
+	  balls[i].velocity += gravity * dt;
     // Apply Velocity to position
-
+	  balls[i].position += balls[i].velocity * dt;
     // *********************************
     
     //super simple bounce function
