@@ -50,11 +50,10 @@ bool update(double delta_time) {
       remainingTime -= dt;
       t += dt;
 
-      // *********************************
-      // Apply Accleration to Velocity
-
-      // Apply Velocity to position
-
+	  // Apply Accleration to Velocity
+	  ball.velocity += gravity * delta_time;
+	  // Apply Velocity to position
+	  ball.position += ball.velocity;
       // *********************************
 
       if (ball.position.y <= 0.0f) {
