@@ -16,3 +16,5 @@ struct sBall {
 };
 
 extern std::vector<sBall> balls;
+extern std::vector<sBall> ballsy;
+extern std::vector<sBall> ballsier;
