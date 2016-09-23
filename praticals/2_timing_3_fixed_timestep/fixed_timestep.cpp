@@ -56,7 +56,7 @@ bool update(double delta_time) {
 	  // Apply Accleration to Velocity
 	  ball.velocity += gravity * delta_time;
 	  // Apply Velocity to position
-	  ball.position += ball.velocity;
+	  ball.position += ball.velocity * delta_time;
 	  // *********************************
 
       if (ball.position.y <= 0.0f) {
