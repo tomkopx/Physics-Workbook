@@ -5,6 +5,7 @@ using namespace glm;
 static vector<cPhysics *> physicsScene;
 
 static dvec3 gravity = dvec3(0, -10.0, 0);
+static dvec3 vertical = dvec3(0, 15.0, 0);
 
 cPhysics::cPhysics() : pm(POINT), Component("Physics") { physicsScene.push_back(this); }
 
@@ -35,10 +36,17 @@ void UpdatePhysics(const double t, const double dt) {
     // set previous position to current position
     e->prev_position = e->position;
     // position += v + a * (dt^2)
-    e->position += velocity + gravity * pow(dt, 2);
+	e->position += velocity + vertical * pow(dt, 2);
+
+	//The ball will start by going up and then fall down
+	vertical += gravity * dt;
+
+	cout << vertical << endl;
 
     if (e->position.y <= 0.0f) {
-      e->prev_position = e->position + (e->position - e->prev_position);
+		gravity *= 0.0;
+		//e->prev_position = e->position + (e->position - e->prev_position);
+		e->position = e->prev_position;
     }
   }
 }
