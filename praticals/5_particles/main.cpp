@@ -28,7 +28,7 @@ bool update(double delta_time) {
     e->Update(delta_time);
   }
 
-  phys::SetCameraTarget(SceneList[0]->GetPosition());
+  //phys::SetCameraTarget(SceneList[0]->GetPosition());
   phys::Update(delta_time);
   return true;
 }
@@ -45,8 +45,8 @@ bool load_content() {
     ent->AddComponent(unique_ptr<Component>(new cShapeRenderer()));
     SceneList.push_back(move(ent));
   }
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(SceneList[0]->GetPosition());
+  phys::SetCameraPos(vec3(70.0f, 10.0f, 20.0f));
+  phys::SetCameraTarget(vec3(2.0, 10.0, 10.0));
   InitPhysics();
   return true;
 }
