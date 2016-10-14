@@ -42,12 +42,14 @@ bool update(double delta_time) {
   }
 
   phys::Update(delta_time);
+  phys::SetCameraPos(vec3(70.0f, 10.0f, 20.0f));
+  //phys::SetCameraTarget(SceneList[0]->GetPosition());
   return true;
 }
 
 bool load_content() {
   phys::Init();
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < 1; i++) {
     SceneList.push_back(move(CreateParticle()));
   }
   floorEnt = unique_ptr<Entity>(new Entity());

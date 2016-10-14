@@ -7,6 +7,8 @@ static vector<cPhysics *> physicsScene;
 static vector<cCollider *> colliders;
 
 static dvec3 gravity = dvec3(0, -10.0, 0);
+static dvec3 a = dvec3(0, 100.0, 50.0);
+static dvec3 wind = dvec3(0, 0, -1.0);
 
 void Resolve(const collisionInfo &ci) {
 
@@ -51,6 +53,15 @@ void cPhysics::SetParent(Entity *p) {
 
 void cPhysics::AddImpulse(const glm::vec3 &i) { forces += i; }
 
+dvec3 Acceleration(const double t) {
+	if (t < 0.1) {
+		return gravity + a;
+	}
+	else {
+		return gravity + wind;
+	}
+}
+
 void UpdatePhysics(const double t, const double dt) {
   std::vector<collisionInfo> collisions;
   // check for collisions
@@ -80,10 +91,13 @@ void UpdatePhysics(const double t, const double dt) {
     // set previous position to current position
     e->prev_position = e->position;
     // position += v + a * (dt^2)
-    e->position += velocity + (e->forces + gravity) * pow(dt, 2);
+    e->position += velocity + (e->forces + Acceleration(t)) * pow(dt, 2);
     e->forces = dvec3(0);
+
+	cout << t << endl;
+
     if (e->position.y <= 0.0f) {
-      //  e->prev_position = e->position + (e->position - e->prev_position);
+        //e->prev_position = e->position + (e->position - e->prev_position);
     }
   }
 }
