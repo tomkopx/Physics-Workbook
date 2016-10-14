@@ -25,7 +25,7 @@ endforeach ()
 
 include(DownloadProject.cmake)
 download_project(PROJ enu_gfx
-  GIT_REPOSITORY      https://github.com/NapierUniversity/enu_graphics_framework
+  GIT_REPOSITORY      https://github.com/edinburgh-napier/set08116_framework
   GIT_TAG             master
   ${UPDATE_DISCONNECTED_IF_AVAILABLE}
 )
@@ -74,7 +74,7 @@ FOREACH(child ${children})
 ENDFOREACH()
 
 if(${MSVC})
-	  target_compile_options(enu_graphics_framework PUBLIC /MP)
+      target_compile_options(enu_graphics_framework PUBLIC /MP)
 ENDIF()
 
 set_target_properties(enu_graphics_framework PROPERTIES FOLDER "DEPS")
