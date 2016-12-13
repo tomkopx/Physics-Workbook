@@ -31,7 +31,7 @@ unique_ptr<Entity> CreateBox(const vec3 &position) {
 
 	unique_ptr<Entity> ent(new Entity());
 	ent->SetPosition(position);
-	//ent->SetRotation(angleAxis(-78.0f, vec3(1, 0, 0)));
+	ent->SetRotation(angleAxis(-78.0f, vec3(1, 0, 0)));
 	unique_ptr<Component> physComponent(new cRigidCube());
 	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::BOX));
 	renderComponent->SetColour(phys::RandomColour());
@@ -78,7 +78,7 @@ bool load_content() {
 	}
 
 	SceneList.push_back(move(CreateBox({0, 0, 0})));
-	//SceneList.push_back(move(CreateBox({ 0, 2, 0 })));
+	SceneList.push_back(move(CreateBox({ 0, 0, 3 })));
 	//SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 6, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));

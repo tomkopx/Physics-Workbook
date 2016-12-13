@@ -185,12 +185,13 @@ bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, c
 	}
 
 	//If all of the cases above are false, then there is a collision
-	if (collision = true) {
+	if (collision == true) {
 		//FIX THIS
 		//civ.push_back(&c1, &c2, );
+		cout << "BOXES COLLIDED MATE" << endl;
 	}
 
-	cout << "Box Box" << endl;
+	//cout << "Box Box" << endl;
 	return collision;
 }
 
