@@ -16,11 +16,11 @@ private:
 class cCollider;
 class cParticle;
 struct collisionInfo {
-  const cCollider *c1;
-  const cCollider *c2;
-  const glm::dvec3 position;
-  const glm::dvec3 normal;
-  const double depth;
+	const cCollider *c1;
+	const cCollider *c2;
+	const glm::dvec3 position;
+	const glm::dvec3 normal;
+	const double depth;
 };
 
 void InitPhysics();
