@@ -101,14 +101,14 @@ bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, c
 	const dvec3 bp = c2.GetParent()->GetPosition();
 
 	//Axis of c1
-	dvec3 a[3] = { dvec3(1, 0, 0), dvec3(0, 1, 0), dvec3(0, 0, 1) };
+	dvec3 a[3] = {dvec3(1, 0, 0), dvec3(0, 1, 0), dvec3(0, 0, 1) };
 
 	//Axis of c2
 	dvec3 b[3] = { dvec3(1, 0, 0), dvec3(0, 1, 0), dvec3(0, 0, 1) };
 	
 
 	//Since half lengths of all of them is 1
-	double whd = c1.radius;
+	double whd = 0.5;
 
 
 	dvec3 T = bp - ap;

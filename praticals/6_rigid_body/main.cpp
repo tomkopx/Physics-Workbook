@@ -31,7 +31,7 @@ unique_ptr<Entity> CreateBox(const vec3 &position) {
 
 	unique_ptr<Entity> ent(new Entity());
 	ent->SetPosition(position);
-	ent->SetRotation(angleAxis(-78.0f, vec3(1, 0, 0)));
+	ent->SetRotation(angleAxis(-90.0f, vec3(1, 0, 0)));
 	unique_ptr<Component> physComponent(new cRigidCube());
 	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::BOX));
 	renderComponent->SetColour(phys::RandomColour());
@@ -67,6 +67,7 @@ bool update(double delta_time) {
 		e->Update(delta_time);
 	}
 
+	phys::SetCameraTarget(SceneList.at(1)->GetPosition());
 	phys::Update(delta_time);
 	return true;
 }
@@ -78,7 +79,7 @@ bool load_content() {
 	}
 
 	SceneList.push_back(move(CreateBox({0, 0, 0})));
-	SceneList.push_back(move(CreateBox({ 0, 0, 3 })));
+	SceneList.push_back(move(CreateBox({ 0, 0, 1.1 })));
 	//SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 6, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
@@ -86,7 +87,7 @@ bool load_content() {
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
 	floorEnt->SetName("Floor");
-	phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
+	phys::SetCameraPos(vec3(20.0f, 10.0f, 0.0f));
 	phys::SetCameraTarget(vec3(0, 10.0f, 0));
 	InitPhysics();
 	return true;
