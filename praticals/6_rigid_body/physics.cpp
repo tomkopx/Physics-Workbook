@@ -9,7 +9,7 @@ static vector<cParticle *> physicsScene;
 static vector<cCollider *> colliders;
 
 static dvec3 gravity = dvec3(0, -10.0, 0);
-const double coef = 0.5;
+const double coef = 0.0;
 const double rigidcoef = 0.0;
 
 void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
@@ -26,11 +26,11 @@ void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
                  (dot(ci.normal, ci.normal) * (b->inversemass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking
-	j = j - (ci.depth * 0.1);
+	j = (j - (ci.depth * 0.1))*0.5;
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inversemass * ci.normal * j);
-	b->AddLinearImpulse(-newVel);
+	b->AddLinearImpulse(-newVel * 0.5);
 
 	// angular impulse
 	auto gg = cross(r0, ci.normal);
