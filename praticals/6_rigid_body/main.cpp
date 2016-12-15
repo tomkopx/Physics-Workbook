@@ -14,6 +14,9 @@ using namespace glm;
 
 static vector<unique_ptr<Entity>> SceneList;
 static unique_ptr<Entity> floorEnt;
+free_camera cam;
+double cursor_x = 0.0;
+double cursor_y = 0.0;
 
 unique_ptr<Entity> CreateParticle() {
 	unique_ptr<Entity> ent(new Entity());
@@ -43,6 +46,54 @@ unique_ptr<Entity> CreateBox(const vec3 &position) {
 	return ent;
 }
 
+bool initialise() {
+
+	glfwSetInputMode(renderer::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
+
+	return true;
+}
+
+//Graphics framework free camera code, does not work
+void fCam(double delta_time)
+{
+	// The ratio of pixels to rotation - remember the fov
+	static double ratio_width = quarter_pi<float>() / static_cast<float>(renderer::get_screen_width());
+	static double ratio_height = (quarter_pi<float>() * (static_cast<float>(renderer::get_screen_height()) / static_cast<float>(renderer::get_screen_width()))) / static_cast<float>(renderer::get_screen_height());
+
+	double current_x;
+	double current_y;
+
+	glfwGetCursorPos(renderer::get_window(), &current_x, &current_y);
+
+
+
+	double delta_x = current_x - cursor_x;
+	double delta_y = current_y - cursor_y;
+
+	delta_x = delta_x * ratio_width;
+	delta_y = -delta_y * ratio_height;
+
+
+
+	cam.rotate(delta_x, delta_y);
+
+
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
+		cam.move(vec3(0.0f, 0.0f, 0.5f));
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
+		cam.move(vec3(0.0f, 0.0f, -0.5f));
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
+		cam.move(vec3(-0.5f, 0.0f, 0.0f));
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
+		cam.move(vec3(0.5f, 0.0f, 0.0f));
+
+
+	cam.update(delta_time);
+
+	glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
+}
+
 bool update(double delta_time) {
 	static double t = 0.0;
 	static double accumulator = 0.0;
@@ -66,8 +117,9 @@ bool update(double delta_time) {
 	for (auto &e : SceneList) {
 		e->Update(delta_time);
 	}
-
+	fCam(delta_time);
 	phys::Update(delta_time);
+	
 	return true;
 }
 
@@ -79,15 +131,18 @@ bool load_content() {
 
 	SceneList.push_back(move(CreateBox({0, 0, 0})));
 	SceneList.push_back(move(CreateBox({ 0, 3, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 5, 0 })));
+	//SceneList.push_back(move(CreateBox({ 0, 10, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 9, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
 
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
 	floorEnt->SetName("Floor");
-	phys::SetCameraPos(vec3(20.0f, 10.0f, 0.0f));
-	phys::SetCameraTarget(vec3(0, 3.0f, 0));
+
+	cam.set_position(vec3(0.0f, 10.0f, 0.0f));
+	cam.set_target(vec3(0.0f, 4.0f, 0.0f));
+	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
+	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 	InitPhysics();
 	return true;
 }
@@ -105,6 +160,7 @@ void main() {
 	app application;
 	// Set load content, update and render methods
 	application.set_load_content(load_content);
+	application.set_initialise(initialise);
 	application.set_update(update);
 	application.set_render(render);
 	// Run application
