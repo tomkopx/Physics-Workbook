@@ -17,7 +17,7 @@ static unique_ptr<Entity> floorEnt;
 
 unique_ptr<Entity> CreateParticle() {
 	unique_ptr<Entity> ent(new Entity());
-	ent->SetPosition(vec3(-2.0, 5.0 + (double)(rand() % 200) / 20.0,2.0));
+	ent->SetPosition(vec3(0, 5.0 + (double)(rand() % 200) / 20.0, 0));
 	unique_ptr<Component> physComponent(new cParticle());
 	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::SPHERE));
 	renderComponent->SetColour(phys::RandomColour());
