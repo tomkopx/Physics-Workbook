@@ -67,7 +67,6 @@ bool update(double delta_time) {
 		e->Update(delta_time);
 	}
 
-	phys::SetCameraTarget(SceneList.at(1)->GetPosition());
 	phys::Update(delta_time);
 	return true;
 }
@@ -79,16 +78,16 @@ bool load_content() {
 	}
 
 	SceneList.push_back(move(CreateBox({0, 0, 0})));
-	SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 6, 0 })));
+	SceneList.push_back(move(CreateBox({ 0, 3, 0 })));
+	//SceneList.push_back(move(CreateBox({ 0, 5, 0 })));
+	//SceneList.push_back(move(CreateBox({ 0, 9, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
 
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
 	floorEnt->SetName("Floor");
 	phys::SetCameraPos(vec3(20.0f, 10.0f, 0.0f));
-	phys::SetCameraTarget(vec3(0, 10.0f, 0));
+	phys::SetCameraTarget(vec3(0, 3.0f, 0));
 	InitPhysics();
 	return true;
 }

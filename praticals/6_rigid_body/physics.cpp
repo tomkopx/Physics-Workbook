@@ -30,7 +30,7 @@ void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inversemass * ci.normal * j);
-	b->AddLinearImpulse(-newVel * 0.5);
+	b->AddLinearImpulse(-newVel);
 
 	// angular impulse
 	auto gg = cross(r0, ci.normal);

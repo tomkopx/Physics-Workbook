@@ -95,92 +95,38 @@ bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cPlaneCollider &p, 
 	return isCollided;
 }
 
+//This function basically checks if the current point of box 1 is close to any point in box 2
+bool checkPoints(double i, double cornerPoint1, double cornerPoint2)
+{
+	bool test = false;
+	double minPoint = 0;
+	double maxPoint = 0;
+	//This takes into account orientation of the box, just a safety precaution if the box is flipped
+	if (cornerPoint1 <= cornerPoint2)
+	{
+		minPoint = cornerPoint1;
+		maxPoint = cornerPoint2;
+	}
+	else
+	{
+		minPoint = cornerPoint2;
+		maxPoint = cornerPoint1;
+	}
+
+	//If the point is in between the min and max points, it will return true, otherwise its false and no collision is happening
+	if (minPoint <= i && i <= maxPoint) {
+		test = true;
+	}
+	return test;
+}
+
+
 bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, const cBoxCollider &c2) {
 
+
 	/*
+	 //This is separating axis theorem that is too complex for me to get the point of collision and other things so I'm gonna use a hacky way devised from sams box plane collision, as shown below
 
-	const dvec3 ap = c1.GetParent()->GetPosition();
-	const dvec3 bp = c2.GetParent()->GetPosition();
-
-	dvec3 collisionCorner;
-	bool collision = false;
-
-	dvec3 aPoints[8] = { dvec3(c1.radius, c1.radius, c1.radius),   dvec3(-c1.radius, c1.radius, c1.radius),
-		dvec3(c1.radius, -c1.radius, c1.radius),  dvec3(-c1.radius, -c1.radius, c1.radius),
-		dvec3(c1.radius, c1.radius, -c1.radius),  dvec3(-c1.radius, c1.radius, -c1.radius),
-		dvec3(c1.radius, -c1.radius, -c1.radius), dvec3(-c1.radius, -c1.radius, -c1.radius) };
-
-	dvec3 bPoints[8] = { dvec3(c2.radius, c2.radius, c2.radius),   dvec3(-c2.radius, c2.radius, c2.radius),
-		dvec3(c2.radius, -c2.radius, c2.radius),  dvec3(-c2.radius, -c2.radius, c2.radius),
-		dvec3(c2.radius, c2.radius, -c2.radius),  dvec3(-c2.radius, c2.radius, -c2.radius),
-		dvec3(c2.radius, -c2.radius, -c2.radius), dvec3(-c2.radius, -c2.radius, -c2.radius) };
-
-	const mat4 ma = glm::translate(ap) * mat4_cast(c1.GetParent()->GetRotation());
-	const mat4 mb = glm::translate(bp) * mat4_cast(c2.GetParent()->GetRotation());
-
-	for (int i = 0; i < 8; i++) {
-		aPoints[i] = dvec3(ma * dvec4(aPoints[i], 1.0));
-		bPoints[i] = dvec3(mb * dvec4(bPoints[i], 1.0));
-	}
-
-	float xMin = c2.GetParent()->GetPosition().x + c2.radius;
-	float xMax = c2.GetParent()->GetPosition().x - c2.radius;
-	float yMin = c2.GetParent()->GetPosition().y + c2.radius;
-	float yMax = c2.GetParent()->GetPosition().y - c2.radius;
-	float zMin = c2.GetParent()->GetPosition().z - c2.radius;
-	float zMax = c2.GetParent()->GetPosition().z + c2.radius;
-
-
-	for (int i = 0; i < 8; i++) {
-
-		if (bPoints[i].x < xMin) {
-			xMin = bPoints[i].x;
-		}
-		else if (bPoints[i].x > xMax) {
-			xMax = bPoints[i].x;
-		}
-		if (bPoints[i].y < yMin) {
-			yMin = bPoints[i].y;
-		}
-		else if (bPoints[i].y > yMax) {
-			yMax = bPoints[i].y;
-		}
-		if (bPoints[i].z < zMin) {
-			zMin = bPoints[i].z;
-		}
-		else if (bPoints[i].z > zMax) {
-			zMax = bPoints[i].z;
-		}
-	}
-
-	for (int i = 0; i < 8; i++) {
-		if (xMin <= aPoints[i].x && aPoints[i].x <= xMax) {
-			cout << "COLLIDING x" << endl;
-			if (yMin <= aPoints[i].y && aPoints[i].y <= yMax) {
-				cout << "COLLIDING y" << endl;
-				if (zMin <= aPoints[i].z && aPoints[i].z <= zMax) {
-					cout << "COLLIDING z" << endl;
-					collision = true;
-					const dvec3 p1 = c1.GetParent()->GetPosition();
-					const dvec3 p2 = c2.GetParent()->GetPosition();
-					const dvec3 d = p2 - p1;
-
-					const double distance = d.length();
-
-					auto depth = (length(p1 - aPoints[i]) + length(p2 - bPoints[i])) - distance;
-					auto norm = glm::normalize(d);
-					auto pos = p2 - norm * (length(p2 - bPoints[i]) - depth);
-					civ.push_back({ &c1, &c2, pos, norm, depth });
-
-				}
-			}
-		}
-		return collision;
-	}
-
-	*/
-
-	 //This is separating axis theorem that is too complex for me to get the point of collision and other things so I'm gonna use the easier hacky way
 	const dvec3 ap = c1.GetParent()->GetPosition();
 	const dvec3 bp = c2.GetParent()->GetPosition();
 	//Axis of c1
@@ -282,7 +228,67 @@ bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, c
 	//cout << "Box Box" << endl;
 	return collision;
 
+	*/
+
+	const dvec3 ap = c1.GetParent()->GetPosition();
+	const dvec3 bp = c2.GetParent()->GetPosition();
+
+	//Points divided by 2 to get half lengths instead of full on radius
+	dvec3 aPoints[8] = { dvec3(c1.radius / 2.0, c1.radius / 2.0, c1.radius / 2.0),   dvec3(-c1.radius / 2.0, c1.radius / 2.0, c1.radius / 2.0),
+		dvec3(c1.radius / 2.0, -c1.radius / 2.0, c1.radius / 2.0),  dvec3(-c1.radius / 2.0, -c1.radius / 2.0, c1.radius / 2.0),
+		dvec3(c1.radius / 2.0, c1.radius / 2.0, -c1.radius / 2.0),  dvec3(-c1.radius / 2.0, c1.radius / 2.0, -c1.radius / 2.0),
+		dvec3(c1.radius / 2.0, -c1.radius / 2.0, -c1.radius / 2.0), dvec3(-c1.radius / 2.0, -c1.radius / 2.0, -c1.radius / 2.0) }; 
 	
+	dvec3 bPoints[8] = { dvec3(c2.radius / 2.0, c2.radius / 2.0, c2.radius / 2.0),   dvec3(-c2.radius / 2.0, c2.radius / 2.0, c2.radius / 2.0),
+		dvec3(c2.radius / 2.0, -c2.radius / 2.0, c2.radius / 2.0),  dvec3(-c2.radius / 2.0, -c2.radius / 2.0, c2.radius / 2.0),
+		dvec3(c2.radius / 2.0, c2.radius / 2.0, -c2.radius / 2.0),  dvec3(-c2.radius / 2.0, c2.radius / 2.0, -c2.radius / 2.0),
+		dvec3(c2.radius / 2.0, -c2.radius / 2.0, -c2.radius / 2.0), dvec3(-c2.radius / 2.0, -c2.radius / 2.0, -c2.radius / 2.0) };
+
+	//Used for transforming the local points of both cubes to world ones
+	const mat4 ma = glm::translate(ap) * mat4_cast(c1.GetParent()->GetRotation());
+	const mat4 mb = glm::translate(bp) * mat4_cast(c2.GetParent()->GetRotation());
+
+	for (int i = 0; i < 8; i++) {
+		aPoints[i] = dvec3(ma * dvec4(aPoints[i], 1.0));
+		bPoints[i] = dvec3(mb * dvec4(bPoints[i], 1.0));
+	}
+
+	bool collision = false;
+
+	for (int i = 0; i < 8; i++) {
+		//Check all the points of cube 1 againts cube 2's corners
+		if (checkPoints(aPoints[i].x, bPoints[0].x, bPoints[7].x)) {
+			if (checkPoints(aPoints[i].y, bPoints[0].y, bPoints[7].y)) {
+				if (checkPoints(aPoints[i].z, bPoints[0].z, bPoints[7].z)) {
+					dvec3 d = bp - ap;
+					double distance = length(d);
+					double depth = (length(ap - aPoints[i]) + length(bp - bPoints[i]) - distance) * 0.1;
+					dvec3 pos = bp - normalize(d) * ((length(aPoints[i] - ap)) - depth);
+					collision = true;
+					civ.push_back({ &c1, &c2, pos, normalize(d) , depth });
+				}
+			}
+		}
+
+	}
+
+	for(int i = 0; i < 8; i++){
+	//Check all the axis points of cube 2 againts cube 1's corners
+		if (checkPoints(bPoints[i].x, aPoints[0].x, aPoints[7].x)) {
+			if (checkPoints(bPoints[i].y, aPoints[0].y, aPoints[7].y)) {
+				if (checkPoints(bPoints[i].z, aPoints[0].z, aPoints[7].z)) {
+					dvec3 d = ap - bp;
+					double distance = length(d);
+					double depth = (length(ap - aPoints[i]) + length(bp - bPoints[i]) - distance) * 0.1;
+					dvec3 pos = ap - normalize(d) * ((length(bp - bPoints[i])) - depth);
+					collision = true;
+					civ.push_back({ &c1, &c2, pos, normalize(d) , depth });
+				}
+			}
+		}
+	}
+
+	return collision;
 }
 
 bool IsColliding(std::vector<collisionInfo> &civ, const cCollider &c1, const cCollider &c2) {
