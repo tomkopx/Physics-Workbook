@@ -18,9 +18,9 @@ free_camera cam;
 double cursor_x = 0.0;
 double cursor_y = 0.0;
 
-unique_ptr<Entity> CreateParticle() {
+unique_ptr<Entity> CreateParticle(const vec3 &position) {
 	unique_ptr<Entity> ent(new Entity());
-	ent->SetPosition(vec3(0, 5.0 + (double)(rand() % 200) / 20.0, 0));
+	ent->SetPosition(position);
 	unique_ptr<Component> physComponent(new cParticle());
 	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::SPHERE));
 	renderComponent->SetColour(phys::RandomColour());
@@ -108,6 +108,22 @@ bool update(double delta_time) {
 		}
 	}
 
+	//Interactivty
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_W)) {
+		SceneList.at(0)->getComponent<cParticle>()->AddLinearForce(dvec3(-200, 0, 0));
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_S)) {
+		SceneList.at(0)->getComponent<cParticle>()->AddLinearForce(dvec3(200, 0, 0));
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_A)) {
+		SceneList.at(0)->getComponent<cParticle>()->AddLinearForce(dvec3(0, 0, 200));
+	}
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_D)) {
+		SceneList.at(0)->getComponent<cParticle>()->AddLinearForce(dvec3(0, 0, -200));
+	}
+
+
+
 	while (accumulator > physics_tick) {
 		UpdatePhysics(t, physics_tick);
 		accumulator -= physics_tick;
@@ -117,7 +133,7 @@ bool update(double delta_time) {
 	for (auto &e : SceneList) {
 		e->Update(delta_time);
 	}
-	fCam(delta_time);
+	cam.update(delta_time);
 	phys::Update(delta_time);
 	
 	return true;
@@ -125,15 +141,16 @@ bool update(double delta_time) {
 
 bool load_content() {
 	phys::Init();
-	for (size_t i = 0; i < 1; i++) {
-		SceneList.push_back(move(CreateParticle()));
-	}
+
+	SceneList.push_back(move(CreateParticle({5, 0, 0})));
+	SceneList.push_back(move(CreateParticle({ 0, 3, -5 })));
+	SceneList.push_back(move(CreateParticle({ -5, 0, 0 })));
+	SceneList.push_back(move(CreateParticle({ -5, 3, 0 })));
 
 	SceneList.push_back(move(CreateBox({0, 0, 0})));
 	SceneList.push_back(move(CreateBox({ 0, 3, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 10, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 9, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
+	SceneList.push_back(move(CreateBox({ 0, 0, 5 })));
+	SceneList.push_back(move(CreateBox({ 0, 0, -5 })));
 
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
@@ -142,7 +159,7 @@ bool load_content() {
 	cam.set_position(vec3(0.0f, 10.0f, 0.0f));
 	cam.set_target(vec3(0.0f, 4.0f, 0.0f));
 	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
-	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
+	//cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 	InitPhysics();
 	return true;
 }
